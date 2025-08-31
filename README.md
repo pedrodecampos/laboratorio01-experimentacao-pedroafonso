@@ -4,7 +4,7 @@ Trabalho da disciplina **Laboratório de Experimentação de Software** (PUC Min
 Analisa 1.000 repositórios mais populares do GitHub para responder às RQs propostas.
 
 ##  Estrutura (proposta do pacote)
-- `main.py` — coleta via **GitHub GraphQL API** com paginação (1000 repositórios).
+- `coletor_github.py` — coleta via **GitHub GraphQL API** com paginação (1000 repositórios).
 - `github_repos.csv` — dados brutos coletados.
 - `analise_repositorios_formatado.pdf` — relatório final com **RQ01–RQ07**, gráficos e tabela por linguagem.
 - `imgs/` ou arquivos `.png` — gráficos: distribuição de linguagens (barra + pizza), idade, PRs mesclados, releases, dias desde última atualização, % issues fechadas.
