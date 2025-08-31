@@ -3,6 +3,7 @@ import json
 import csv
 import os
 from datetime import datetime, date
+import statistics
 
 # Substitua com seu token de acesso pessoal do GitHub
 GITHUB_TOKEN = ""
@@ -23,7 +24,7 @@ def run_query(query, variables):
     else:
         raise Exception(f"Query failed to run with status code {request.status_code}. {request.text}")
 
-def calculate_age_in_days(created_at):
+def repo_age_in_days(created_at):
     """
     Calcula a idade do repositório em dias.
     """
@@ -31,9 +32,9 @@ def calculate_age_in_days(created_at):
     today = date.today()
     return (today - created_date).days
 
-def calculate_age_in_days(updated_at):
+def last_update_in_days(updated_at):
     """
-    Calcula a idade do repositório em dias.
+    Calcula quantos dias se passaram desde a última atualização.
     """
     updated_date = datetime.strptime(updated_at, '%Y-%m-%dT%H:%M:%SZ').date()
     today = date.today()
@@ -132,8 +133,8 @@ def save_to_csv(data, filename="github_repos.csv"):
                     'nameWithOwner': repo['nameWithOwner'],
                     'createdAt': repo['createdAt'],
                     'updatedAt': repo['updatedAt'],
-                    'age_in_days': calculate_age_in_days(repo['createdAt']),
-                    'last_updated_days_ago': calculate_age_in_days(repo['updatedAt']),
+                    'age_in_days': repo_age_in_days(repo['createdAt']),
+                    'last_updated_days_ago': last_update_in_days(repo['updatedAt']),
                     'stargazerCount': repo['stargazerCount'],
                     'primaryLanguage': repo['primaryLanguage']['name'] if repo['primaryLanguage'] else 'N/A',
                     'releases_totalCount': repo['releases']['totalCount'],
@@ -145,10 +146,37 @@ def save_to_csv(data, filename="github_repos.csv"):
                 })
     print(f"Dados salvos com sucesso em '{filename}'")
 
+def summarize_data(data):
+    """
+    Calcula as medianas para as RQs.
+    """
+    ages = [repo_age_in_days(r['createdAt']) for r in data]
+    last_updates = [last_update_in_days(r['updatedAt']) for r in data]
+    prs = [r['pullRequests']['totalCount'] for r in data]
+    releases = [r['releases']['totalCount'] for r in data]
+    closed_percentage = [
+        (r['issues']['totalCount'] / (r['issues']['totalCount'] + r['openIssues']['totalCount'])) * 100
+        if (r['issues']['totalCount'] + r['openIssues']['totalCount']) > 0 else 0
+        for r in data
+    ]
+    langs = [r['primaryLanguage']['name'] if r['primaryLanguage'] else 'N/A' for r in data]
+
+    print("\n=== Resultados (Medianas) ===")
+    print(f"RQ01 - Idade (anos): {statistics.median(ages)/365:.1f}")
+    print(f"RQ02 - PRs mesclados: {statistics.median(prs)}")
+    print(f"RQ03 - Releases: {statistics.median(releases)}")
+    print(f"RQ04 - Dias desde última atualização: {statistics.median(last_updates)}")
+    print(f"RQ06 - % issues fechadas: {statistics.median(closed_percentage):.2f}%")
+
+    print("\n=== RQ05 - Linguagens (contagem) ===")
+    for lang, count in {l: langs.count(l) for l in set(langs)}.items():
+        print(f"{lang}: {count}")
+
 if __name__ == "__main__":
-    if GITHUB_TOKEN == "YOUR_GITHUB_TOKEN":
-        print("ERRO: Por favor, substitua 'YOUR_GITHUB_TOKEN' pelo seu token do GitHub.")
+    if not GITHUB_TOKEN:
+        print("ERRO: Por favor, substitua 'GITHUB_TOKEN' pelo seu token do GitHub.")
     else:
         print("Coletando dados dos 1.000 repositórios mais populares...")
         repositories_data = fetch_repositories()
         save_to_csv(repositories_data)
+        summarize_data(repositories_data)
