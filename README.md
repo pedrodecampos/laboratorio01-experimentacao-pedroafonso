@@ -18,7 +18,7 @@ Analisa 1.000 repositórios mais populares do GitHub para responder às RQs prop
 1. Crie um **token pessoal do GitHub** e cole em `GITHUB_TOKEN` no `main.py`.
 2. Rode a coleta:
    ```bash
-   python main.py
+   python coletor_github.py
    ```
 3. Verifique o arquivo gerado `github_repos.csv`.
 4. Rode a análise (separada ou no próprio script) para gerar os gráficos e o PDF final.
