@@ -66,7 +66,6 @@ Analisa 1.000 repositórios mais populares do GitHub para responder às RQs prop
 - **C++/Rust**: altas medianas de PRs, porém com janelas de atualização um pouco maiores em relação a Python.
 - **Go/TypeScript**: altos valores de PRs e releases, confirmando ecossistemas ativos.
 
-> As conclusões por linguagem dependem do corte mínimo de amostras e devem ser interpretadas como **tendências** no conjunto analisado.
 
 ---
 
