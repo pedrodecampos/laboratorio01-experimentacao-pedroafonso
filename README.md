@@ -10,8 +10,6 @@ Analisa 1.000 repositórios mais populares do GitHub para responder às RQs prop
 - `imgs/` ou arquivos `.png` — gráficos: distribuição de linguagens (barra + pizza), idade, PRs mesclados, releases, dias desde última atualização, % issues fechadas.
 - `README.md` — este arquivo.
 
-> Observação: o professor **não permite** bibliotecas de terceiros para a consulta à API do GitHub. Este projeto escreve a query GraphQL e consome a API com `requests`.
-
 ---
 
 ##  Como executar
